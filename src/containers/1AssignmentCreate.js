@@ -29,10 +29,8 @@ class AssignmentCreate extends React.Component {
 
   handleSubmit = e => {
     e.preventDefault();
-    /*
     this.props.form.validateFields((err, values) => {
       if (!err) {
-
         console.log("Received values of form: ", values);
         const questions = [];
         for (let i = 0; i < values.questions.length; i += 1) {
@@ -48,34 +46,12 @@ class AssignmentCreate extends React.Component {
           questions
         };
         this.props.createASNT(this.props.token, asnt);
-
       }
-
-    });*/
-
-    this.props.form.validateFields().then(values => {
-
-      console.log("Received values of form: ", values);
-      const questions = [];
-      for (let i = 0; i < values.questions.length; i += 1) {
-        questions.push({
-          title: values.question[i],
-          choices: values.questions[i].choices.filter(el => el !== null),
-          answer: values.answers[i]
-        });
-      }
-      const asnt = {
-        teacher: this.props.username,
-        title: values.title,
-        questions
-      };
-      this.props.createASNT(this.props.token, asnt);
-
-    })
+    });
   };
 
   render() {
-    //const { getFieldDecorator } = this.props.form;
+    const { getFieldDecorator } = this.props.form;
     const questions = [];
     for (let i = 0; i < this.state.formCount; i += 1) {
       questions.push(
@@ -96,13 +72,16 @@ class AssignmentCreate extends React.Component {
     return (
       <Form onSubmit={this.handleSubmit}>
         <h1>Create an assignment</h1>
-        <FormItem label={"Title: "} name="title" rules={[
-          {
-            required: true,
-            message: "Please input a title"
-          }
-        ]} validateTrigger={["onChange", "onBlur"]}>
-          <Input placeholder="Add a title" />
+        <FormItem label={"Title: "}>
+          {getFieldDecorator(`title`, {
+            validateTrigger: ["onChange", "onBlur"],
+            rules: [
+              {
+                required: true,
+                message: "Please input a title"
+              }
+            ]
+          })(<Input placeholder="Add a title" />)}
         </FormItem>
         {questions}
         <FormItem>
@@ -120,7 +99,7 @@ class AssignmentCreate extends React.Component {
   }
 }
 
-//const WrappedAssignmentCreate = Form.create()(AssignmentCreate);
+const WrappedAssignmentCreate = Form.create()(AssignmentCreate);
 
 const mapStateToProps = state => {
   return {
@@ -139,4 +118,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(AssignmentCreate);
+)(WrappedAssignmentCreate);
